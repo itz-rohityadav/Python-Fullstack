@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if view.object %}Edit Product{% else %}Add Product{% endif %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f8f8f8;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            max-width: 400px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        form p {
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>{% if view.object %}Edit Product{% else %}Add Product{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+
+    <a href="{% url 'product_list' %}">Cancel</a>
+</body>
+</html>
