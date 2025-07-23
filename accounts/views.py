@@ -89,8 +89,6 @@ def profile_edit(request):
         profile, created = JobSeekerProfile.objects.get_or_create(user=user)
         
         if request.method == 'POST':
-            print(f"POST data received: {request.POST}")
-            print(f"FILES data: {request.FILES}")
             
             form = JobSeekerProfileForm(request.POST, request.FILES, instance=profile)
             
@@ -98,13 +96,10 @@ def profile_edit(request):
                 try:
                     saved_profile = form.save()
                     messages.success(request, f'✅ Profile updated successfully! Welcome, {user.first_name}!')
-                    print(f"Profile saved successfully for user: {user.username}")
                     return redirect('dashboard')
                 except Exception as e:
-                    print(f"Error saving profile: {e}")
                     messages.error(request, f'❌ Error saving profile: {str(e)}')
             else:
-                print(f"Form validation errors: {form.errors}")
                 error_msgs = []
                 for field, errors in form.errors.items():
                     for error in errors:
@@ -128,8 +123,6 @@ def profile_edit(request):
         )
         
         if request.method == 'POST':
-            print(f"Recruiter POST data: {request.POST}")
-            print(f"Recruiter FILES: {request.FILES}")
             
             form = RecruiterProfileForm(request.POST, request.FILES, instance=profile)
             
@@ -137,13 +130,10 @@ def profile_edit(request):
                 try:
                     saved_profile = form.save()
                     messages.success(request, f'✅ Company profile updated successfully!')
-                    print(f"Recruiter profile saved for: {user.username}")
                     return redirect('dashboard')
                 except Exception as e:
-                    print(f"Error saving recruiter profile: {e}")
                     messages.error(request, f'❌ Error saving profile: {str(e)}')
             else:
-                print(f"Recruiter form errors: {form.errors}")
                 error_msgs = []
                 for field, errors in form.errors.items():
                     for error in errors:

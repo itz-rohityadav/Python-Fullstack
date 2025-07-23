@@ -53,7 +53,7 @@ tzdata==2025.2
 2. **Create and activate a virtual environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -86,7 +86,7 @@ tzdata==2025.2
    ```
 
 9. **Access the application**
-   - Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser.
+   - Open (http://127.0.0.1:8000/) in your browser.
 
 ## Usage
 
