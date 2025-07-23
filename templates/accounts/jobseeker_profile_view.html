@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}View Profile - Job Portal{% endblock %}
+
+{% block content %}
+<div class="profile-view-container">
+    <div class="profile-header">
+        <h1>Profile for {{ profile.user.first_name }} {{ profile.user.last_name }}</h1>
+        <h3>({{ profile.job_title }})</h3>
+    </div>
+
+    <div class="profile-section">
+        <h2>Professional Information</h2>
+        <p><strong>Skills:</strong> {{ profile.skills }}</p>
+        <p><strong>Experience:</strong> {{ profile.experience_years }} years</p>
+        <p><strong>Education:</strong> {{ profile.education }}</p>
+        <p><strong>Location:</strong> {{ profile.location }}</p>
+    </div>
+
+    <div class="profile-section">
+        <h2>Contact Information</h2>
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+        <p><strong>Phone:</strong> {{ profile.user.phone }}</p>
+    </div>
+
+    <div class="profile-section">
+        <h2>Social Links & Portfolio</h2>
+        {% if profile.linkedin_url %}
+        <p><strong>LinkedIn:</strong> <a href="{{ profile.linkedin_url }}" target="_blank">{{ profile.linkedin_url }}</a></p>
+        {% endif %}
+        {% if profile.github_url %}
+        <p><strong>GitHub:</strong> <a href="{{ profile.github_url }}" target="_blank">{{ profile.github_url }}</a></p>
+        {% endif %}
+        {% if profile.portfolio_url %}
+        <p><strong>Portfolio:</strong> <a href="{{ profile.portfolio_url }}" target="_blank">{{ profile.portfolio_url }}</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

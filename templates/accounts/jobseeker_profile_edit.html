@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Job Portal{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <h1 class="page-title"><i class="fas fa-user-edit"></i> Edit Your Profile</h1>
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-check-circle"></i> {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+        
+        <!-- Profile Picture Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-camera"></i> Profile Picture</h3>
+            <div class="form-group">
+                <div class="image-upload-container">
+                    {% if form.instance.profile_picture %}
+                        <div class="current-image">
+                            <img src="{{ form.instance.profile_picture.url }}" alt="Current Profile Picture" class="profile-preview" id="current-profile-pic">
+                            <p><i class="fas fa-check-circle"></i> Current profile picture</p>
+                        </div>
+                    {% else %}
+                        <div class="no-image">
+                            <i class="fas fa-user-circle" style="font-size: 4rem; color: #ccc;"></i>
+                            <p>No profile picture uploaded</p>
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.profile_picture.id_for_label }}" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Choose Profile Picture
+                    </label>
+                    {{ form.profile_picture }}
+                    <div class="file-info">
+                        <small><i class="fas fa-info-circle"></i> Supported formats: JPG, PNG, GIF (Max: 5MB)</small>
+                    </div>
+                    {% if form.profile_picture.errors %}
+                        <div class="error"><i class="fas fa-exclamation-triangle"></i> {{ form.profile_picture.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Information Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-briefcase"></i> Professional Information</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.job_title.id_for_label }}" class="form-label">Job Title</label>
+                    <input type="text" name="job_title" value="{{ form.job_title.value|default:'' }}" class="form-control" id="{{ form.job_title.id_for_label }}" placeholder="Current or desired job title">
+                    {% if form.job_title.errors %}
+                        <div class="error">{{ form.job_title.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                    <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="form-control" id="{{ form.location.id_for_label }}" placeholder="Enter your location">
+                    {% if form.location.errors %}
+                        <div class="error">{{ form.location.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.experience_years.id_for_label }}" class="form-label">Years of Experience</label>
+                    <input type="number" name="experience_years" value="{{ form.experience_years.value|default:'' }}" class="form-control" id="{{ form.experience_years.id_for_label }}" min="0" max="50">
+                    {% if form.experience_years.errors %}
+                        <div class="error">{{ form.experience_years.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.experience_level.id_for_label }}" class="form-label">Experience Level</label>
+                    {{ form.experience_level }}
+                    {% if form.experience_level.errors %}
+                        <div class="error">{{ form.experience_level.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.education.id_for_label }}" class="form-label">Education</label>
+                    <input type="text" name="education" value="{{ form.education.value|default:'' }}" class="form-control" id="{{ form.education.id_for_label }}" placeholder="Your highest education qualification">
+                    {% if form.education.errors %}
+                        <div class="error">{{ form.education.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.languages.id_for_label }}" class="form-label">Languages</label>
+                    <input type="text" name="languages" value="{{ form.languages.value|default:'' }}" class="form-control" id="{{ form.languages.id_for_label }}" placeholder="Languages you speak">
+                    {% if form.languages.errors %}
+                        <div class="error">{{ form.languages.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.certifications.id_for_label }}" class="form-label">Certifications</label>
+                <textarea name="certifications" class="form-control" id="{{ form.certifications.id_for_label }}" rows="3" placeholder="List your professional certifications (one per line)">{{ form.certifications.value|default:'' }}</textarea>
+                {% if form.certifications.errors %}
+                    <div class="error">{{ form.certifications.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Skills and Bio Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-tools"></i> Skills & Bio</h3>
+            
+            <div class="form-group">
+                <label for="{{ form.skills.id_for_label }}" class="form-label">Skills</label>
+                <textarea name="skills" class="form-control" id="{{ form.skills.id_for_label }}" rows="4" placeholder="List your skills (e.g., Python, JavaScript, Project Management)">{{ form.skills.value|default:'' }}</textarea>
+                <small class="form-text text-muted">List your skills, separated by commas</small>
+                {% if form.skills.errors %}
+                    <div class="error">{{ form.skills.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.bio.id_for_label }}" class="form-label">Professional Bio</label>
+                <textarea name="bio" class="form-control" id="{{ form.bio.id_for_label }}" rows="5" placeholder="Write a brief professional bio about yourself">{{ form.bio.value|default:'' }}</textarea>
+                {% if form.bio.errors %}
+                    <div class="error">{{ form.bio.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Employment Preferences Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-briefcase"></i> Employment Preferences</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.preferred_employment_type.id_for_label }}" class="form-label">Preferred Employment Type</label>
+                    {{ form.preferred_employment_type }}
+                    {% if form.preferred_employment_type.errors %}
+                        <div class="error">{{ form.preferred_employment_type.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.expected_salary.id_for_label }}" class="form-label">Expected Salary</label>
+                    <input type="text" name="expected_salary" value="{{ form.expected_salary.value|default:'' }}" class="form-control" id="{{ form.expected_salary.id_for_label }}" placeholder="Expected salary range">
+                    {% if form.expected_salary.errors %}
+                        <div class="error">{{ form.expected_salary.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.availability_date.id_for_label }}" class="form-label">Availability Date</label>
+                    {{ form.availability_date }}
+                    {% if form.availability_date.errors %}
+                        <div class="error">{{ form.availability_date.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <div class="form-check">
+                            {{ form.willing_to_relocate }}
+                            <label class="form-check-label" for="{{ form.willing_to_relocate.id_for_label }}">
+                                Willing to relocate
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            {{ form.remote_work_preference }}
+                            <label class="form-check-label" for="{{ form.remote_work_preference.id_for_label }}">
+                                Interested in remote work
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Links & Portfolio Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-link"></i> Social Links & Portfolio</h3>
+            
+            <div class="form-group">
+                <label for="{{ form.portfolio_url.id_for_label }}" class="form-label">Portfolio URL</label>
+                <input type="url" name="portfolio_url" value="{{ form.portfolio_url.value|default:'' }}" class="form-control" id="{{ form.portfolio_url.id_for_label }}" placeholder="https://yourportfolio.com">
+                {% if form.portfolio_url.errors %}
+                    <div class="error">{{ form.portfolio_url.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.linkedin_url.id_for_label }}" class="form-label">LinkedIn Profile</label>
+                    <input type="url" name="linkedin_url" value="{{ form.linkedin_url.value|default:'' }}" class="form-control" id="{{ form.linkedin_url.id_for_label }}" placeholder="https://linkedin.com/in/yourprofile">
+                    {% if form.linkedin_url.errors %}
+                        <div class="error">{{ form.linkedin_url.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.github_url.id_for_label }}" class="form-label">GitHub Profile</label>
+                    <input type="url" name="github_url" value="{{ form.github_url.value|default:'' }}" class="form-control" id="{{ form.github_url.id_for_label }}" placeholder="https://github.com/yourusername">
+                    {% if form.github_url.errors %}
+                        <div class="error">{{ form.github_url.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume Section -->
+        <div class="form-section">
+            <h3><i class="fas fa-file-pdf"></i> Resume</h3>
+            <div class="form-group">
+                {% if form.instance.resume %}
+                    <div class="current-file">
+                        <p><i class="fas fa-file-pdf"></i> Current resume: 
+                            <a href="{{ form.instance.resume.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye"></i> View Resume
+                            </a>
+                        </p>
+                    </div>
+                {% endif %}
+                <label for="{{ form.resume.id_for_label }}" class="file-upload-label">
+                    <i class="fas fa-upload"></i> Upload New Resume
+                </label>
+                {{ form.resume }}
+                <div class="file-info">
+                    <small><i class="fas fa-info-circle"></i> Supported formats: PDF, DOC, DOCX (Max: 10MB)</small>
+                </div>
+                {% if form.resume.errors %}
+                    <div class="error">{{ form.resume.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Profile
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced Form Debugging and Validation
+    const form = document.querySelector('.profile-form');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    
+    // File upload preview
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const label = document.querySelector(`label[for="${input.id}"]`);
+                if (label) {
+                    label.innerHTML = `<i class="fas fa-check"></i> ${file.name}`;
+                    label.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                }
+            }
+        });
+    });
+    
+    // Form Submission Enhancement
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission started');
+            
+            // Disable button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
+            // Validate required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            let hasErrors = false;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#ef4444';
+                    hasErrors = true;
+                } else {
+                    field.style.borderColor = '#10b981';
+                }
+            });
+            
+            if (hasErrors) {
+                e.preventDefault();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Profile';
+                alert('Please fill in all required fields.');
+                return false;
+            }
+            
+            // Log form data for debugging
+            const formData = new FormData(form);
+            console.log('Form data being submitted:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+        });
+        
+        // Re-enable button if form submission fails
+        window.addEventListener('beforeunload', function() {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Profile';
+        });
+    }
+    
+    // Form field validation on blur
+    const formFields = form.querySelectorAll('input, textarea, select');
+    formFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (this.hasAttribute('required') && !this.value.trim()) {
+                this.style.borderColor = '#ef4444';
+            } else if (this.value.trim()) {
+                this.style.borderColor = '#10b981';
+            } else {
+                this.style.borderColor = '#e1e5e9';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Job Portal{% endblock %}
+
+{% block content %}
+<div class="choice-container">
+    <div class="auth-header">
+        <h1>Join Job Portal</h1>
+        <p>Choose your account type to get started</p>
+    </div>
+    
+    <div class="choice-cards">
+        <a href="{% url 'jobseeker-register' %}" class="choice-card">
+            <div class="choice-icon">👤</div>
+            <div class="choice-title">Job Seeker</div>
+            <div class="choice-description">
+                Find your dream job, apply to positions, and manage your career profile.
+            </div>
+        </a>
+        
+        <a href="{% url 'recruiter-register' %}" class="choice-card">
+            <div class="choice-icon">🏢</div>
+            <div class="choice-title">Recruiter</div>
+            <div class="choice-description">
+                Post job openings, find qualified candidates, and build your team.
+            </div>
+        </a>
+    </div>
+    
+    <div class="auth-links">
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</div>
+{% endblock %}

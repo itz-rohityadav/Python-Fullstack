@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ job.title }} - Job Portal{% endblock %}
+
+{% block content %}
+<div class="job-detail">
+    <div class="job-header">
+        <h1>{{ job.title }}</h1>
+        <div class="company-info">
+            <h2>{{ job.recruiter.company_name }}</h2>
+            {% if job.recruiter.company_logo %}
+                <img src="{{ job.recruiter.company_logo.url }}" alt="{{ job.recruiter.company_name }}" class="company-logo">
+            {% endif %}
+        </div>
+        <div class="job-meta">
+            <span class="job-type">{{ job.get_job_type_display }}</span>
+            <span class="location">{{ job.location }}</span>
+            <span class="experience">{{ job.get_experience_required_display }}</span>
+            <span class="posted">Posted {{ job.created_at|timesince }} ago</span>
+        </div>
+    </div>
+
+    <div class="job-content">
+        <div class="job-section">
+            <h3>Job Description</h3>
+            <div class="job-description">
+                {{ job.description|linebreaks }}
+            </div>
+        </div>
+
+        <div class="job-section">
+            <h3>Requirements</h3>
+            <div class="job-requirements">
+                {{ job.requirements|linebreaks }}
+            </div>
+        </div>
+
+        {% if job.skills_required %}
+        <div class="job-section">
+            <h3>Skills Required</h3>
+            <div class="skills">
+                {{ job.skills_required|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if job.salary_min or job.salary_max %}
+        <div class="job-section">
+            <h3>Salary Range</h3>
+            <div class="salary">
+                {% if job.salary_min and job.salary_max %}
+                    ${{ job.salary_min }} - ${{ job.salary_max }}
+                {% elif job.salary_min %}
+                    From ${{ job.salary_min }}
+                {% elif job.salary_max %}
+                    Up to ${{ job.salary_max }}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if job.deadline %}
+        <div class="job-section">
+            <h3>Application Deadline</h3>
+            <div class="deadline">
+                {{ job.deadline }}
+                {% if job.is_deadline_passed %}
+                    <span class="deadline-passed">(Deadline has passed)</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Application Section -->
+    {% if user.is_authenticated and user.user_type == 'jobseeker' %}
+    <div class="application-section">
+        {% if already_applied %}
+            <div class="alert alert-info">
+                <p>You have already applied for this job.</p>
+            </div>
+        {% elif job.is_deadline_passed %}
+            <div class="alert alert-warning">
+                <p>The application deadline for this job has passed.</p>
+            </div>
+        {% else %}
+            <h3>Apply for this Job</h3>
+            <form method="post" action="{% url 'job-apply' job.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ apply_form.cover_letter.id_for_label }}">Cover Letter:</label>
+                    {{ apply_form.cover_letter }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ apply_form.resume.id_for_label }}">Resume (optional):</label>
+                    {{ apply_form.resume }}
+                    <small>Leave blank to use your profile resume</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+            </form>
+        {% endif %}
+    </div>
+    {% elif user.is_authenticated and user.user_type == 'recruiter' %}
+        {% if job.recruiter.user == user %}
+        <div class="recruiter-actions">
+            <a href="{% url 'job-edit' job.pk %}" class="btn btn-secondary">Edit Job</a>
+            <a href="{% url 'job-applications' job.pk %}" class="btn btn-info">View Applications</a>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="login-prompt">
+            <p><a href="{% url 'login' %}">Login</a> to apply for this job.</p>
+        </div>
+    {% endif %}
+</div>
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

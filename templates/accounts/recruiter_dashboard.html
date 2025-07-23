@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Recruiter Dashboard - Job Portal{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Welcome, {{ user.first_name|default:user.username }}!</h1>
+    <p>Manage your job posts and view applications here.</p>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_jobs }}</div>
+            <div class="stat-label">Jobs Posted</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_applications }}</div>
+            <div class="stat-label">Applications</div>
+        </div>
+    </div>
+    
+    <div class="dashboard-actions">
+        <a href="{% url 'job-create' %}" class="btn btn-primary">Post a Job</a>
+        <a href="{% url 'profile-edit' %}" class="btn btn-outline-primary">Edit Profile</a>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Job Posts</h3>
+            </div>
+            {% if jobs %}
+                {% for job in jobs %}
+                    <div class="job-card">
+                        <div class="job-title">{{ job.title }}</div>
+                        <div class="company-name">{{ job.recruiter.company_name }}</div>
+                        <div class="job-meta">
+                            <span>Type: {{ job.get_job_type_display }}</span>
+                            <span>Location: {{ job.location }}</span>
+                            <span>Status: {% if job.is_active %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-warning">Paused</span>{% endif %}</span>
+                        </div>
+                        <div class="job-actions">
+                            <a href="{% url 'job-applications' job.pk %}" class="btn btn-outline-primary">View Applications</a>
+                            <form method="post" action="{% url 'job-delete' job.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this job?');">Delete</button>
+                            </form>
+                            <form method="post" action="{% url 'job-toggle-status' job.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                {% if job.is_active %}
+                                    <button type="submit" class="btn btn-warning">Pause</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-success">Resume</button>
+                                {% endif %}
+                            </form>
+                            <a href="{% url 'job-detail' job.pk %}" class="btn btn-secondary">View Job</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>You haven't posted any jobs yet. <a href="{% url 'job-create' %}">Post a job</a> to find candidates!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
